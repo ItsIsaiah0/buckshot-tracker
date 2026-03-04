@@ -111,6 +111,13 @@
             color: #aaaaaa;
             margin: 0;
         }
+
+        #phone-live,
+        #phone-blank {
+            background-color: #121212;
+            border: 2px solid #d8af2c;
+            color: #d8af2c;
+        }
     </style>
 </head>
 
@@ -141,6 +148,18 @@
         <button id="fire-blank">Fired Blank</button>
         <button id="reverse">Reverse Polarity</button>
         <button id="clear-round">Clear Round</button>
+    </div>
+
+    <div class="input-row" style="margin-top: 20px; margin-bottom: 10px;">
+        <div>
+            <label style="color: #d8af2c; width: auto;">☎️ Phone - Bullet #:</label>
+            <input type="number" id="phone-input">
+        </div>
+    </div>
+
+    <div class="button-row">
+        <button id="phone-live">Hinted Live</button>
+        <button id="phone-blank">Hinted Blank</button>
     </div>
 
     <div class="log-box" id="move-log">
