@@ -89,6 +89,23 @@
             color: #1fd219;
             width: 295px;
         }
+
+        .chance-row {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 20px;
+        }
+
+        .live-text {
+            color: #ff5252;
+            margin: 0;
+        }
+
+        .blank-text {
+            color: #aaaaaa;
+            margin: 0;
+        }
     </style>
 </head>
 
@@ -104,6 +121,13 @@
         <div>
             <label>Blank Rounds:</label>
             <input type="number" id="blank-input">
+        </div>
+    </div>
+
+    <div class="chance-row">
+        <div class="chance-row">
+            <h2 class="live-text">Live: <span id="live-percent">0%</span></h2>
+            <h2 class="blank-text">Blank: <span id="blank-percent">0%</span></h2>
         </div>
     </div>
 
