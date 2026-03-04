@@ -64,23 +64,23 @@ function addToLog(message) {
 function shootLive() {
     let currentLives = Number(liveInput.value) || 0;
     if (currentLives > 0) {
-        liveInput.value = currentLives - 1; 
-        
+        liveInput.value = currentLives - 1;
+
         let hintText = getHintSuffix(); // Ask the helper function for the countdown text
         addToLog(`<span style='color: #ff5252;'>Fired LIVE shell</span>${hintText}`);
-        
-        updateOdds(); 
+
+        updateOdds();
     }
 }
 
 function shootBlank() {
     let currentBlanks = Number(blankInput.value) || 0;
     if (currentBlanks > 0) {
-        blankInput.value = currentBlanks - 1; 
-        
+        blankInput.value = currentBlanks - 1;
+
         let hintText = getHintSuffix(); // Ask the helper function for the countdown text
         addToLog(`<span style='color: #1976d2;'>Fired BLANK shell</span>${hintText}`);
-        
+
         updateOdds();
     }
 }
@@ -95,6 +95,13 @@ function swapPolarity() {
 
         addToLog("<span style='color: #1fd219;'>Used Reverse Polarity</span>");
         updateOdds();
+    }
+    if (bulletsUntilHint > 0) {
+        if (hintedType === "LIVE") {
+            hintedType = "BLANK";
+        } else if (hintedType === "BLANK") {
+            hintedType = "LIVE";
+        }
     }
 }
 
@@ -145,7 +152,7 @@ function getHintSuffix() {
             return ` <span style='color: #d8af2c;'>- next is ${hintedType}</span>`;
         } else if (bulletsUntilHint === 0) {
             hintedType = "";
-            return ""; 
+            return "";
         }
     }
     return "";
