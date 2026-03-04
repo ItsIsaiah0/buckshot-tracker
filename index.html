@@ -90,6 +90,13 @@
             width: 295px;
         }
 
+        #clear-round {
+            background-color: #121212;
+            border: 2px solid #333;
+            color: #333;
+            width: 295px;
+        }
+
         .chance-row {
             display: flex;
             justify-content: center;
@@ -116,11 +123,11 @@
     <div class="input-row">
         <div>
             <label>Live Rounds:</label>
-            <input type="number" id="live-input">
+            <input type="number" id="live-input" pattern="[0-9]*">
         </div>
         <div>
             <label>Blank Rounds:</label>
-            <input type="number" id="blank-input">
+            <input type="number" id="blank-input" pattern="[0-9]*">
         </div>
     </div>
 
@@ -140,10 +147,14 @@
         <button id="reverse">Reverse Polarity</button>
     </div>
 
+    <div class="button-row">
+        <button id="clear-round">Clear Round</button>
+    </div>
+
     <div class="log-box" id="move-log">
         <p>Game log will appear here...</p>
     </div>
-
+    <script src="script.js"></script>
 </body>
 
 </html>
