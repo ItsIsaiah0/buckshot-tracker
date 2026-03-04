@@ -25,3 +25,18 @@ function updateOdds() {
 
 liveInput.addEventListener('input', updateOdds);
 blankInput.addEventListener('input', updateOdds);
+
+const clearRnd = document.getElementById('clear-round');
+const moveLog = document.getElementById('move-log');
+
+function clearRound() {
+
+    liveInput.value = '';
+    blankInput.value = '';
+    
+    moveLog.innerHTML = '<p>Game log will appear here...</p>';
+
+    updateOdds();
+}
+
+clearRnd.addEventListener('click', clearRound);
