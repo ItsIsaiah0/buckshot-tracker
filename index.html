@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,11 +9,117 @@
     <style>
         body {
             background-color: #121212;
-            color: white
+            color: white;
+            text-align: center;
+            font-family: sans-serif;
+            margin-top: 50px;
+        }
+
+        .input-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            margin-right: 15px;
+        }
+
+        .log-box {
+            background-color: #1e1e1e;
+            width: 80%;
+            max-width: 400px;
+            height: 200px;
+            margin: 0 auto;
+            border-radius: 10px;
+            padding: 15px;
+            overflow-y: auto;
+            text-align: left;
+            border: 2px solid #333;
+            margin-top: 25px;
+        }
+
+        .log-box p {
+            font-size: 14px;
+            margin-top: 0px;
+        }
+
+        input {
+            width: 50px;
+            padding: 7px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+            text-align: center;
+            background-color: #333;
+            color: white;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+
+        button {
+            padding: 15px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            width: 140px;
+        }
+
+        #fire-live {
+            background-color: #121212;
+            border: 2px solid #d32f2f;
+            color: #d32f2f;
+        }
+
+        #fire-blank {
+            background-color: #121212;
+            border: 2px solid #1976d2;
+            color: #1976d2;
+        }
+
+        #reverse {
+            background-color: #121212;
+            border: 2px solid #1fd219;
+            color: #1fd219;
+            width: 295px;
         }
     </style>
 </head>
+
 <body>
+
     <h1>Buckshot Tracker</h1>
+
+    <div class="input-row">
+        <div>
+            <label>Live Rounds:</label>
+            <input type="number" id="live-input">
+        </div>
+        <div>
+            <label>Blank Rounds:</label>
+            <input type="number" id="blank-input">
+        </div>
+    </div>
+
+    <div class="button-row">
+        <button id="fire-live">Fired Live</button>
+        <button id="fire-blank">Fired Blank</button>
+    </div>
+
+    <div class="button-row">
+        <button id="reverse">Reverse Polarity</button>
+    </div>
+
+    <div class="log-box" id="move-log">
+        <p>Game log will appear here...</p>
+    </div>
+
 </body>
+
 </html>
