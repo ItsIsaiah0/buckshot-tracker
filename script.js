@@ -12,6 +12,10 @@ const phoneLive = document.getElementById('phone-live');
 const phoneBlank = document.getElementById('phone-blank');
 let hintedType = "";
 let bulletsUntilHint = 0;
+const undoBtn = document.getElementById('undo-btn');
+const redoBtn = document.getElementById('redo-btn');
+let undoStack = [];
+let redoStack = [];
 
 function updateOdds() {
 
@@ -49,6 +53,67 @@ function clearRound() {
     updateOdds();
 }
 
+
+function saveState() {
+    undoStack.push({
+        lives: liveInput.value,
+        blanks: blankInput.value,
+        log: moveLog.innerHTML,
+        hintType: hintedType,
+        hintCount: bulletsUntilHint
+    });
+
+    redoStack = [];
+}
+
+
+function restoreState(state) {
+    liveInput.value = state.lives;
+    blankInput.value = state.blanks;
+    moveLog.innerHTML = state.log;
+    hintedType = state.hintType;
+    bulletsUntilHint = state.hintCount;
+
+    moveLog.scrollTop = moveLog.scrollHeight;
+    updateOdds();
+}
+
+
+function undoAction() {
+    if (undoStack.length > 0) {
+
+        redoStack.push({
+            lives: liveInput.value,
+            blanks: blankInput.value,
+            log: moveLog.innerHTML,
+            hintType: hintedType,
+            hintCount: bulletsUntilHint
+        });
+
+        let previousState = undoStack.pop();
+        restoreState(previousState);
+    }
+}
+
+function redoAction() {
+    if (redoStack.length > 0) {
+
+        undoStack.push({
+            lives: liveInput.value,
+            blanks: blankInput.value,
+            log: moveLog.innerHTML,
+            hintType: hintedType,
+            hintCount: bulletsUntilHint
+        });
+
+        let nextState = redoStack.pop();
+        restoreState(nextState);
+    }
+}
+
+undoBtn.addEventListener('click', undoAction);
+redoBtn.addEventListener('click', redoAction);
+
 clearRnd.addEventListener('click', clearRound);
 
 function addToLog(message) {
@@ -62,11 +127,12 @@ function addToLog(message) {
 }
 
 function shootLive() {
+    saveState();
     let currentLives = Number(liveInput.value) || 0;
     if (currentLives > 0) {
         liveInput.value = currentLives - 1;
 
-        let hintText = getHintSuffix(); // Ask the helper function for the countdown text
+        let hintText = getHintSuffix();
         addToLog(`<span style='color: #ff5252;'>Fired LIVE shell</span>${hintText}`);
 
         updateOdds();
@@ -74,11 +140,12 @@ function shootLive() {
 }
 
 function shootBlank() {
+    saveState();
     let currentBlanks = Number(blankInput.value) || 0;
     if (currentBlanks > 0) {
         blankInput.value = currentBlanks - 1;
 
-        let hintText = getHintSuffix(); // Ask the helper function for the countdown text
+        let hintText = getHintSuffix();
         addToLog(`<span style='color: #1976d2;'>Fired BLANK shell</span>${hintText}`);
 
         updateOdds();
@@ -86,6 +153,7 @@ function shootBlank() {
 }
 
 function swapPolarity() {
+    saveState();
     let currentLives = liveInput.value;
     let currentBlanks = blankInput.value;
 
@@ -110,6 +178,7 @@ fireBlank.addEventListener('click', shootBlank);
 reverse.addEventListener('click', swapPolarity);
 
 function logPhoneLive() {
+    saveState();
     let bulletNum = Number(phoneInput.value);
     if (bulletNum === 1) {
         hintedType = "LIVE";
@@ -125,6 +194,7 @@ function logPhoneLive() {
 }
 
 function logPhoneBlank() {
+    saveState();
     let bulletNum = Number(phoneInput.value);
     if (bulletNum === 1) {
         hintedType = "BLANK";
