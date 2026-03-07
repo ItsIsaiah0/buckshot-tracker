@@ -1,2 +1,2 @@
 # buckshot-tracker
-Tool to quickly keep track of any game in Buckshot Roulette on Roblox.
+Tool to quickly keep track of any game in Buckshot Roulette.
