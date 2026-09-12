@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0d0d10">
+<title>Storage Wars Helper</title>
+<style>
+  :root{
+    --bg:#0d0d10;
+    --panel:#17171c;
+    --panel2:#202027;
+    --text:#f5f5f7;
+    --muted:#aaaab4;
+    --line:#30303a;
+    --good:#4ade80;
+    --warn:#facc15;
+    --danger:#fb7185;
+    --accent:#a78bfa;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    min-height:100dvh;padding:calc(env(safe-area-inset-top) + 14px) 14px calc(env(safe-area-inset-bottom) + 22px);
+  }
+  .wrap{max-width:520px;margin:auto}
+  h1{font-size:24px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px;margin:12px 0}
+  .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+  .count{font-size:72px;line-height:1;font-weight:900;text-align:center;margin:10px 0 4px}
+  .gold{text-align:center;color:var(--muted);font-size:15px;margin-bottom:12px}
+  .progress{height:12px;background:#2b2b32;border-radius:999px;overflow:hidden}
+  .bar{height:100%;width:0;background:var(--accent);transition:width .18s ease}
+  .target{text-align:center;color:var(--muted);font-size:13px;margin-top:8px}
+  button{
+    width:100%;border:0;border-radius:18px;padding:18px 16px;
+    font-size:20px;font-weight:900;color:#fff;background:var(--panel2);
+    touch-action:manipulation;
+  }
+  button:active{transform:scale(.985)}
+  .add{font-size:30px;background:#6246c7;min-height:88px;margin-top:14px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .small{font-size:16px;padding:14px}
+  .alarm{background:#b42333;font-size:27px;min-height:82px;margin-top:12px}
+  .timer{
+    font-variant-numeric:tabular-nums;text-align:center;font-size:68px;
+    font-weight:900;line-height:1;margin:12px 0 6px
+  }
+  .state{text-align:center;font-size:20px;font-weight:900;margin-bottom:10px}
+  .state.safe{color:var(--good)}
+  .state.warn{color:var(--warn)}
+  .state.danger{color:var(--danger)}
+  .hint{color:var(--muted);font-size:13px;text-align:center;line-height:1.4}
+  .settings{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:12px;color:var(--muted);font-size:13px}
+  input[type=number]{
+    width:68px;background:#0f0f13;border:1px solid var(--line);border-radius:10px;
+    color:var(--text);padding:8px;text-align:center;font-size:16px
+  }
+  .done{
+    display:none;margin-top:12px;padding:12px;border-radius:14px;
+    background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.35);
+    color:var(--good);font-weight:900;text-align:center
+  }
+  .footer{color:#777783;text-align:center;font-size:11px;margin-top:14px;line-height:1.4}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Storage Wars Helper</h1>
+  <div class="sub">Count trash. Track gold. Start Creak's stun timer when the Fire Escape begins opening.</div>
+
+  <section class="card">
+    <div class="label">Depot Items</div>
+    <div id="count" class="count">0</div>
+    <div id="gold" class="gold">0 Gold • 0 / 1,000 required</div>
+    <div class="progress"><div id="bar" class="bar"></div></div>
+    <div id="target" class="target">40 minimum • aim for 45–50</div>
+    <div id="done" class="done">STORAGE WARS READY — 1,000+ GOLD 🎉</div>
+
+    <button id="add" class="add">+ ITEM</button>
+    <div class="row">
+      <button id="minus" class="small">− 1</button>
+      <button id="resetCount" class="small">Reset Count</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="label">Creak Fire-Alarm Stun</div>
+    <div id="timer" class="timer">1:30</div>
+    <div id="state" class="state danger">NOT RUNNING</div>
+
+    <button id="alarm" class="alarm">🚪 DOOR OPENING — START</button>
+    <div class="row">
+      <button id="stop" class="small">Stop Timer</button>
+      <button id="plus10" class="small">+10 sec</button>
+    </div>
+
+    <div class="settings">
+      Default:
+      <input id="duration" type="number" min="30" max="180" step="1" value="90">
+      seconds
+    </div>
+    <p class="hint">
+      Green = use the stun window to move. Yellow = start playing safer.
+      Red = assume Creak may be active again.
+    </p>
+  </section>
+
+  <div class="footer">
+    Item value: 25 Gold each. Storage Wars requires 1,000+ Gold in one deposit.
+    Tap the timer when the Fire Escape begins opening. Creak's wiki timing is described as “about 90 seconds,” so treat the countdown as a conservative estimate, not a frame-perfect guarantee.
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  let count = Number(localStorage.getItem("sw_count") || 0);
+  let duration = Number(localStorage.getItem("sw_duration") || 90);
+  let endAt = Number(localStorage.getItem("sw_endAt") || 0);
+  let running = endAt > Date.now();
+
+  $("duration").value = duration;
+
+  function renderCount(){
+    $("count").textContent = count;
+    const gold = count * 25;
+    $("gold").textContent = `${gold.toLocaleString()} Gold • ${Math.min(gold,1000).toLocaleString()} / 1,000 required`;
+    $("bar").style.width = `${Math.min(100, (gold/1000)*100)}%`;
+    $("done").style.display = gold >= 1000 ? "block" : "none";
+    $("target").textContent = count < 40
+      ? `${40-count} more to minimum • aim for 45–50`
+      : count < 45
+        ? `Minimum reached • ${45-count} more to safer target`
+        : count <= 50
+          ? `Safer target reached • ${count} items`
+          : `${count} items • extra cushion`;
+    localStorage.setItem("sw_count", count);
+  }
+
+  function beep(freq=880, ms=120){
+    try{
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new Ctx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.frequency.value = freq;
+      gain.gain.value = .08;
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start();
+      setTimeout(()=>{ osc.stop(); ctx.close(); }, ms);
+    }catch(e){}
+  }
+
+  function startTimer(){
+    duration = Math.max(30, Math.min(180, Number($("duration").value || 90)));
+    $("duration").value = duration;
+    localStorage.setItem("sw_duration", duration);
+    endAt = Date.now() + duration*1000;
+    localStorage.setItem("sw_endAt", endAt);
+    running = true;
+    beep(660,100);
+    tick();
+  }
+
+  function stopTimer(){
+    running = false;
+    endAt = 0;
+    localStorage.removeItem("sw_endAt");
+    tick();
+  }
+
+  function format(sec){
+    const m = Math.floor(sec/60), s = sec%60;
+    return `${m}:${String(s).padStart(2,"0")}`;
+  }
+
+  let warned30 = false, warned10 = false;
+  function tick(){
+    const base = Number($("duration").value || duration || 90);
+    if(!running){
+      $("timer").textContent = format(base);
+      $("state").textContent = "NOT RUNNING";
+      $("state").className = "state danger";
+      warned30 = warned10 = false;
+      return;
+    }
+    const left = Math.max(0, Math.ceil((endAt-Date.now())/1000));
+    $("timer").textContent = format(left);
+
+    if(left > 30){
+      $("state").textContent = "MOVE NOW";
+      $("state").className = "state safe";
+    }else if(left > 10){
+      $("state").textContent = "CAUTION";
+      $("state").className = "state warn";
+      if(!warned30){ beep(740,100); warned30=true; }
+    }else if(left > 0){
+      $("state").textContent = "GET READY FOR CREAK";
+      $("state").className = "state danger";
+      if(!warned10){ beep(440,180); warned10=true; }
+    }else{
+      $("state").textContent = "ASSUME CREAK IS ACTIVE";
+      $("state").className = "state danger";
+      running = false;
+      localStorage.removeItem("sw_endAt");
+      beep(330,250);
+      setTimeout(()=>beep(330,250), 300);
+    }
+  }
+
+  $("add").onclick = () => { count++; renderCount(); if(count===40) beep(990,180); };
+  $("minus").onclick = () => { count=Math.max(0,count-1); renderCount(); };
+  $("resetCount").onclick = () => {
+    if(confirm("Reset item count to 0?")){ count=0; renderCount(); }
+  };
+  $("alarm").onclick = startTimer;
+  $("stop").onclick = stopTimer;
+  $("plus10").onclick = () => {
+    if(running){ endAt += 10000; localStorage.setItem("sw_endAt", endAt); tick(); }
+  };
+  $("duration").onchange = () => {
+    duration = Math.max(30, Math.min(180, Number($("duration").value || 90)));
+    $("duration").value = duration;
+    localStorage.setItem("sw_duration", duration);
+    if(!running) tick();
+  };
+
+  renderCount();
+  tick();
+  setInterval(tick, 250);
+})();
+</script>
+</body>
+</html>
